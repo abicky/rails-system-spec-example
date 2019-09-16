@@ -28,5 +28,15 @@ module SystemHelper
     return if @is_failed_screenshot_taken
     super
     @is_failed_screenshot_taken = true
+
+    if failed? && supports_screenshot?
+      File.open(image_path, "rb") do |f|
+        Aws::S3::Client.new.put_object(
+          bucket: ENV["SCREENSHOT_S3_BUCKET"],
+          key: "#{ENV["SCREENSHOT_S3_PREFIX"]}/#{File.basename(image_path)}",
+          body: f,
+        )
+      end
+    end
   end
 end
