@@ -1,24 +1,3 @@
-# README
+# rails-system-spec-example
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
-
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+Sample application for ["Rails アプリケーションの不安定なテストを撲滅したい 〜system spec のデバッグ方法とテストを不安定にさせる要因〜"](https://abicky.net/2019/09/17/062506/)
