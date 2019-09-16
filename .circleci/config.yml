@@ -1,0 +1,45 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/ruby:2.6-node-browsers
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+            - rails-bundle-{{ checksum "Gemfile.lock" }}
+            - rails-bundle-
+
+      - run: bundle install --path=vendor/bundle --jobs=4 --retry=3
+
+      - save_cache:
+          key: rails-bundle-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor/bundle
+
+      - restore_cache:
+          keys:
+            - rails-yarn-{{ checksum "yarn.lock" }}
+            - rails-yarn-
+
+      - run: yarn install --cache-folder ~/.cache/yarn
+
+      - save_cache:
+          key: rails-yarn-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+
+      - run:
+          command: |
+            bundle exec rspec --format json \
+                              --out result.json \
+                              --format RspecJunitFormatter \
+                              --out test_results/rspec.xml \
+                              --format progress
+
+      - store_test_results:
+          path: test_results
+
+      - store_artifacts:
+          path: result.json
