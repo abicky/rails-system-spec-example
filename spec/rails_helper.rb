@@ -58,4 +58,37 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
+
+  Capybara.register_driver :debuggable_chrome_headless do |app|
+    options = Selenium::WebDriver::Chrome::Options.new
+    options.add_argument('headless')
+    options.add_argument('remote-debugging-port=9222')
+
+    capabilities = Selenium::WebDriver::Remote::Capabilities.chrome(
+      'goog:loggingPrefs': {
+        browser: "ALL",
+      }
+    )
+
+    if ENV["CHROME_DRIVER_LOG"].present?
+      service = Selenium::WebDriver::Service.chrome(
+        args: {
+          log_path: ENV["CHROME_DRIVER_LOG"],
+          verbose: true,
+        },
+      )
+    end
+
+    Capybara::Selenium::Driver.new(
+      app,
+      browser: :chrome,
+      options: options,
+      desired_capabilities: capabilities,
+      service: service,
+    )
+  end
+
+  config.before(:each, type: :system) do
+    driven_by(:debuggable_chrome_headless)
+  end
 end
