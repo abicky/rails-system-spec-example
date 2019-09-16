@@ -3,6 +3,8 @@ jobs:
   build:
     docker:
       - image: circleci/ruby:2.6-node-browsers
+    environment:
+      RAILS_SYSTEM_TESTING_SCREENSHOT_HTML: 1
     steps:
       - checkout
 
@@ -43,3 +45,6 @@ jobs:
 
       - store_artifacts:
           path: result.json
+
+      - store_artifacts:
+          path: tmp/screenshots
